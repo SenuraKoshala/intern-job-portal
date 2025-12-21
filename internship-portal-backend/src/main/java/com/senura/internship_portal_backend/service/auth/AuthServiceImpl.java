@@ -1,5 +1,6 @@
 package com.senura.internship_portal_backend.service.auth;
 
+import com.senura.internship_portal_backend.config.security.JwtUtils;
 import com.senura.internship_portal_backend.dto.request.CompanySignupRequest;
 import com.senura.internship_portal_backend.dto.request.LoginRequest;
 import com.senura.internship_portal_backend.dto.request.StudentSignupRequest;
@@ -20,6 +21,8 @@ public class AuthServiceImpl implements AuthService {
     private final StudentRepository studentRepository;
     private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
+
 
     @Override
     public AuthResponse registerStudent(StudentSignupRequest request) {
@@ -47,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
 
         studentRepository.save(student);
 
-        return new AuthResponse("Student registered successfully", user.getRole().name());
+        return new AuthResponse("Student registered successfully", user.getRole().name(), null);
     }
 
     @Override
@@ -76,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
 
         companyRepository.save(company);
 
-        return new AuthResponse("Company registered successfully", user.getRole().name());
+        return new AuthResponse("Company registered successfully", user.getRole().name(), null);
     }
 
     @Override
@@ -89,7 +92,11 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid email or password");
         }
 
-        return new AuthResponse("Login successful", user.getRole().name());
+        // Generate JWT token
+        String token = jwtUtils.generateToken(user.getEmail(), user.getRole().name());
+
+        return new AuthResponse("Login successful", user.getRole().name(), token);
     }
+
 }
 
