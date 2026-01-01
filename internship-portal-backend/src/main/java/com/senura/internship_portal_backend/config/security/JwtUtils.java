@@ -11,7 +11,11 @@ import java.security.Key;
 @Component
 public class JwtUtils {
 
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); // auto 256-bit secure key
+    // Use a fixed secret key for development to prevent token invalidation on
+    // restart
+    // In production, this should be in application.properties
+    private static final String SECRET = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
+    private final Key key = Keys.hmacShaKeyFor(io.jsonwebtoken.io.Decoders.BASE64.decode(SECRET));
 
     public String generateToken(String email, String role) {
         return Jwts.builder()
@@ -37,6 +41,7 @@ public class JwtUtils {
     }
 
     public String getRoleFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("role", String.class);
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("role",
+                String.class);
     }
 }
