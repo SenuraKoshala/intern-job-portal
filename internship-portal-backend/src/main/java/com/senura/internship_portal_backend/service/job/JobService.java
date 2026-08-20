@@ -9,7 +9,7 @@ public interface JobService {
 
     JobPostResponse createJob(String companyEmail, JobPostRequest request);
 
-    List<JobPostResponse> getAllJobs(String currentUserEmail);
+    List<JobPostResponse> getAllJobs(String keyword, String location, String duration, String currentUserEmail);
 
     List<JobPostResponse> getJobsByCompany(String companyEmail);
 

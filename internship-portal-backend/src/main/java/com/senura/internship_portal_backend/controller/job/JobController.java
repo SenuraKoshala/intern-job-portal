@@ -29,9 +29,13 @@ public class JobController {
 
     // PUBLIC: View all jobs (but with like status if logged in)
     @GetMapping
-    public ResponseEntity<List<JobPostResponse>> getAllJobs(Authentication authentication) {
+    public ResponseEntity<List<JobPostResponse>> getAllJobs(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String duration,
+            Authentication authentication) {
         String email = (authentication != null) ? authentication.getName() : null;
-        return ResponseEntity.ok(jobService.getAllJobs(email));
+        return ResponseEntity.ok(jobService.getAllJobs(keyword, location, duration, email));
     }
 
     // COMPANY: View own jobs

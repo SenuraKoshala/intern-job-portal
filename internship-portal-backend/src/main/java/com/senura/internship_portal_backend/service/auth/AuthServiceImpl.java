@@ -23,12 +23,12 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
-
     @Override
     public AuthResponse registerStudent(StudentSignupRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already registered");
+            throw new com.senura.internship_portal_backend.exception.UserAlreadyExistsException(
+                    "Email already registered");
         }
 
         User user = User.builder()
@@ -50,14 +50,18 @@ public class AuthServiceImpl implements AuthService {
 
         studentRepository.save(student);
 
-        return new AuthResponse("Student registered successfully", user.getRole().name(), null);
+        // Generate JWT token
+        String token = jwtUtils.generateToken(user.getEmail(), user.getRole().name());
+
+        return new AuthResponse("Student registered successfully", user.getRole().name(), token);
     }
 
     @Override
     public AuthResponse registerCompany(CompanySignupRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already registered");
+            throw new com.senura.internship_portal_backend.exception.UserAlreadyExistsException(
+                    "Email already registered");
         }
 
         User user = User.builder()
@@ -79,7 +83,10 @@ public class AuthServiceImpl implements AuthService {
 
         companyRepository.save(company);
 
-        return new AuthResponse("Company registered successfully", user.getRole().name(), null);
+        // Generate JWT token
+        String token = jwtUtils.generateToken(user.getEmail(), user.getRole().name());
+
+        return new AuthResponse("Company registered successfully", user.getRole().name(), token);
     }
 
     @Override
@@ -99,4 +106,3 @@ public class AuthServiceImpl implements AuthService {
     }
 
 }
-

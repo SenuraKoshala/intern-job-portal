@@ -30,5 +30,16 @@ public class Student {
     private int academicYear;
 
     private String cvUrl;
-}
 
+    @Column(length = 2000)
+    private String bio;
+
+    private String skills; // Comma separated
+
+    @Column(length = 2000)
+    private String experience;
+
+    private String portfolioUrl;
+
+    private String linkedInUrl;
+}

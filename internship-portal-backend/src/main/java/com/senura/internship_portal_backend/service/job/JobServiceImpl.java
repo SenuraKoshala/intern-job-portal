@@ -43,9 +43,23 @@ public class JobServiceImpl implements JobService {
         }
 
         @Override
-        public List<JobPostResponse> getAllJobs(String currentUserEmail) {
-                return jobRepository.findAll()
-                                .stream()
+        public List<JobPostResponse> getAllJobs(String keyword, String location, String duration,
+                        String currentUserEmail) {
+                // If all filters are null/empty, we can use findAll or just pass nulls to
+                // searchJobs
+                // However, let's treat blank strings as nulls for cleaner querying
+                String k = (keyword != null && !keyword.isBlank()) ? keyword : null;
+                String l = (location != null && !location.isBlank()) ? location : null;
+                String d = (duration != null && !duration.isBlank()) ? duration : null;
+
+                List<JobPost> jobs;
+                if (k == null && l == null && d == null) {
+                        jobs = jobRepository.findAll();
+                } else {
+                        jobs = jobRepository.searchJobs(k, l, d);
+                }
+
+                return jobs.stream()
                                 .map(job -> mapToResponse(job, currentUserEmail))
                                 .collect(Collectors.toList());
         }
